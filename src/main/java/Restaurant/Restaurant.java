@@ -1,16 +1,27 @@
 package Restaurant;
 
 import Person.Address;
-import Person.OwnerRestaurant;
+import Person.Employee;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Restaurant {
+    private int restaurant_id;
+    private int owner_id;
+
     private String name;
     private Address address;
-    private OwnerRestaurant ownerRestaurant;
-    private List<OrdersFood> Orders = new ArrayList<>();
-    private List<Integer> positions = new ArrayList<>();
+
+
+    private List<Employee> EmployeeList = new ArrayList<>();
+    private List<Reservation> ReservationList = new ArrayList<>();
+    private List<Integer> TablesList = new ArrayList<>();
+
+    private MenulList menulList;
+
+    private int visitors;
+    private double raiting;
 
 }
+

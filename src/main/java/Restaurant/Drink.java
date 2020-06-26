@@ -1,17 +1,15 @@
 package Restaurant;
 
-public class Food {
-    private int food_id;
+public class Drink {
+    private int drink_id;
     private String name;
     private int price;
     private String type;
     private String description;
     private int timeToCreate;
 
-
-
-    public Food(int food_id, String name, int price, String type, String description, int timeToCreate) {
-        this.food_id = food_id;
+    public Drink(int drink_id, String name, int price, String type, String description, int timeToCreate) {
+        this.drink_id = drink_id;
         this.name = name;
         this.price = price;
         this.type = type;
@@ -19,14 +17,12 @@ public class Food {
         this.timeToCreate = timeToCreate;
     }
 
-
-
-    public int getFood_id() {
-        return food_id;
+    public int getDrink_id() {
+        return drink_id;
     }
 
-    public void setFood_id(int food_id) {
-        this.food_id = food_id;
+    public void setDrink_id(int drink_id) {
+        this.drink_id = drink_id;
     }
 
     public String getName() {
@@ -68,6 +64,7 @@ public class Food {
     public void setTimeToCreate(int timeToCreate) {
         this.timeToCreate = timeToCreate;
     }
-// mozno pridat alergeny list array
+
+
 
 }
