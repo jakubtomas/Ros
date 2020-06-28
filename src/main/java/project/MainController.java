@@ -9,9 +9,6 @@ public class MainController {
         SpringApplication.run(MainController.class,args);
 
 
-        Database db = new Database();
-        db.getConnection();
-
 
         // userController.checkPassword()
         /*

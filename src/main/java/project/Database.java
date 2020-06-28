@@ -1,44 +1,77 @@
 package project;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import com.mongodb.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.MongoDatabase;
+import org.bson.Document;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class Database   {
-    private final String JDBC = "com.mysql.jdbc.Driver";
-    //private final String URL = "jdbc:mysql://localhost:3306/world_x?autoReconnect=true&useSSL=false";
-    private final String URL = "jdbc:mysql://itsovy.sk:3306/chat1n?autoReconnect=true&useSSL=false";
-    //  private final String QUERY = "SELECT * FROM users Where email like \"%gmail%\" ";
-    //private  final  String WORD = "SELECT * FROM users  Where  name like \"%lev%\"  or  second_name  like \"%lev%\"";
-    private  final  String WORD = "Select * from message order by id desc limit 10";
+public class Database {
+
+    // todo create Design Pattern for connection  Singleton
+    private MongoClient mongo = new MongoClient("localhost", 27017);
+    private MongoDatabase database = mongo.getDatabase("ros");
+
+    //table ownerRestaurant
+    private MongoCollection<Document> ownerRestaurant = database.getCollection("ownerRestaurant");
 
 
-    private Connection connection;
-    private final String URL2 = "jdbc:mysql://localhost:3306/restaurantorderingsystem?autoReconnect=true&useSSL=false";
-
-
-    public Connection getConnection() throws Exception {
-
-        Class.forName(JDBC);
-        connection = DriverManager.getConnection(URL2, "root", "root");
-        return connection;
-
+    public void closeConnectionDb() {
+        this.mongo = null;
+        this.database = null;
     }
 
-    public void selectCategory() throws Exception {
-       // SELECT * From category
-        PreparedStatement statement  = getConnection().prepareStatement("SELECT * From category");
-        ResultSet rs = statement.executeQuery();
+    public void insertOwnerRestaurant(JSONObject jsonObject) throws JSONException {
 
-        while (rs.next()) {
+        Document document = new Document()
+                .append("fname", jsonObject.getString("fname"))
+                .append("lname", jsonObject.getString("lname"))
+                .append("login", jsonObject.getString("login"))
+                .append("password", jsonObject.getString("password"))
 
-            String name = rs.getString("name");
+                //contact
+                .append("address", jsonObject.getString("address"))
+                .append("email", jsonObject.getString("email"))
+                .append("phoneNumber", jsonObject.getString("phoneNumber"))
 
-            System.out.println("resutl form database is " + name );
+                // invoice information about company
+                .append("ico", jsonObject.getString("ico"))
+                .append("dic", jsonObject.getString("dic"))
+                .append("icDph", jsonObject.getString("icDph"))
+                .append("companyName", jsonObject.getString("companyName"))
+                .append("invoiceStreet", jsonObject.getString("invoiceStreet"))
+                .append("invoiceZipcode", jsonObject.getString("invoiceZipcode"))
+                .append("invoiceCity", jsonObject.getString("invoiceCity"));
+
+
+        ownerRestaurant.insertOne(document);
+
+        System.out.println("=================================");
+        System.out.println("IinsertOwnerRestaurant successfully ");
+        System.out.println("=================================");
+    }
+
+
+    public boolean existToken(String token, String login) throws JSONException {
+        try (MongoCursor<Document> cursor = ownerRestaurant.find().iterator()) {
+
+            System.out.println("input token " + token);
+            System.out.println("input login " + login);
+
+            while (cursor.hasNext()) {
+                Document doc = cursor.next();
+                JSONObject object = new JSONObject(doc.toJson());
+
+                if (object.getString("login").equals(login) && object.getString("token").equals(token)) {
+                    System.out.println("login from object " + object.getString("login"));
+                    return true;
+                }
+            }
         }
-
-        connection.close();
-
+        return false;
     }
+
+
 }
