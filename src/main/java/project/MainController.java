@@ -1,13 +1,16 @@
 package project;
 
-import org.json.JSONException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class MainController {
-    public static void main(String[] args) throws JSONException {// doplnujuci paramter , vsetky tie parametre sa ulozia
+    public static void main(String[] args) throws Exception {// doplnujuci paramter , vsetky tie parametre sa ulozia
         SpringApplication.run(MainController.class,args);
+
+
+        Database db = new Database();
+        db.getConnection();
 
 
         // userController.checkPassword()
