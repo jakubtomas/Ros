@@ -34,7 +34,7 @@ public class Router {
     private boolean existValue(String nameTable, String nameColumn, String searchValue) throws JSONException {
         Database database = new Database();
         return database.existValue(nameTable, nameColumn, searchValue);
-
+//todo poznamka potrebne zmenit funkciu pretože po každom zavolani sa otvori a zatvori connection Database
 
         // return true or false
 
@@ -65,6 +65,8 @@ public class Router {
                 inputJson.has("invoiceZipcode") && inputJson.has("invoiceCity")) {
 
 
+
+            // todo open connection database  somewhere here
             // check exist login
             if (existValue("ownerRestaurant", "login", inputJson.getString("login"))
                     || existValue("customer", "login", inputJson.getString("login"))
@@ -72,7 +74,6 @@ public class Router {
 
 
                 result.put("login", "Login exist, Please change login  ");
-                return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body(result.toString());
 
             }
 
@@ -86,7 +87,50 @@ public class Router {
 
             }
 
-            //todo check ico dic , icDph, company name , invoice all 3 values
+
+            //check ico that exist
+            if (existValue("ownerRestaurant", "ico", inputJson.getString("ico"))
+                    || existValue("customer", "ico", inputJson.getString("ico"))
+                    || existValue("employee", "ico", inputJson.getString("ico"))) {
+
+                result.put("ico", "Ico exist  ");
+
+            }
+
+            //check dic that exist
+            if (existValue("ownerRestaurant", "dic", inputJson.getString("dic"))
+                    || existValue("customer", "dic", inputJson.getString("dic"))
+                    || existValue("employee", "dic", inputJson.getString("dic"))) {
+
+                result.put("dic", "dic exist  ");
+
+            }
+
+            //check icDph that exist
+            if (existValue("ownerRestaurant", "icDph", inputJson.getString("icDph"))
+                    || existValue("customer", "icDph", inputJson.getString("icDph"))
+                    || existValue("employee", "icDph", inputJson.getString("icDph"))) {
+
+                result.put("icDph", "icDph exist  ");
+
+            }
+
+            // check company Name that exist
+            if (existValue("ownerRestaurant", "companyName", inputJson.getString("companyName"))
+                    || existValue("customer", "companyName", inputJson.getString("companyName"))
+                    || existValue("employee", "companyName", inputJson.getString("companyName"))) {
+
+                result.put("companyName", "companyName exist  ");
+
+            }
+            // todo write close database connection
+            //todo write condition when is empty result continue when no return 400
+//            return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body(result.toString());
+
+
+
+
+
 
             // hash password
             String hashPass = hash(inputJson.getString("password"));
