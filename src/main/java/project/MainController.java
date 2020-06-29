@@ -13,14 +13,6 @@ public class MainController {
         // userController.checkPassword()
         /*
 
-        res.put("fname", "fname pridavam");  // put message
-        res.put("lname", "lname try to send");
-        res.put("login", "login try to send ");
-
-
-        database.insertUser(res);
-
-
 */
 
 

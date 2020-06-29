@@ -22,7 +22,6 @@ public class Router {
         Random rand = new Random();
         long longToken = Math.abs(rand.nextLong());
         String random = Long.toString(longToken, 16);
-
         return random;
     }
 
@@ -30,6 +29,15 @@ public class Router {
     public boolean validToken(String token, String login) {
 
         return true;
+    }
+
+    private boolean existValue(String nameTable, String nameColumn, String searchValue) throws JSONException {
+        Database database = new Database();
+        return database.existValue(nameTable, nameColumn, searchValue);
+
+
+        // return true or false
+
     }
 
     public String hash(String password) {
@@ -57,12 +65,29 @@ public class Router {
                 inputJson.has("invoiceZipcode") && inputJson.has("invoiceCity")) {
 
 
+            // check exist login
+            if (existValue("ownerRestaurant", "login", inputJson.getString("login"))
+                    || existValue("customer", "login", inputJson.getString("login"))
+                    || existValue("employee", "login", inputJson.getString("login"))) {
 
 
-            result.put("error", "Empty value from input ");
-            return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body(result.toString());
+                result.put("login", "Login exist, Please change login  ");
+                return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body(result.toString());
 
-        } else {
+            }
+
+
+            //check Email that exist
+            if (existValue("ownerRestaurant", "email", inputJson.getString("email"))
+                    || existValue("customer", "email", inputJson.getString("email"))
+                    || existValue("employee", "email", inputJson.getString("email"))) {
+
+                result.put("email", "Email exist  ");
+
+            }
+
+            //todo check ico dic , icDph, company name , invoice all 3 values
+
             // hash password
             String hashPass = hash(inputJson.getString("password"));
 
@@ -71,9 +96,22 @@ public class Router {
             objectforDb.put("fname", inputJson.getString("fname"));  // put message
             objectforDb.put("lname", inputJson.getString("lname"));
             objectforDb.put("login", inputJson.getString("login"));
-            objectforDb.put("address", inputJson.getString("address"));
             objectforDb.put("password", hashPass);
-            objectforDb.put("token", ""); // default empty token
+
+            //contact
+            objectforDb.put("address", inputJson.getString("address"));
+            objectforDb.put("email", inputJson.getString("email"));
+            objectforDb.put("phoneNumber", inputJson.getString("phoneNumber"));
+
+            //invoice information about company
+            objectforDb.put("ico", inputJson.getString("ico"));
+            objectforDb.put("dic", inputJson.getString("dic"));
+            objectforDb.put("icDph", inputJson.getString("icDph"));
+            objectforDb.put("companyName", inputJson.getString("companyName"));
+            objectforDb.put("invoiceStreet", inputJson.getString("invoiceStreet"));
+            objectforDb.put("invoiceZipcode", inputJson.getString("invoiceZipcode"));
+            objectforDb.put("invoiceCity", inputJson.getString("invoiceCity"));
+            ; // default empty token
 
 
             //database
@@ -81,13 +119,15 @@ public class Router {
             db.insertOwnerRestaurant(objectforDb);
 
 
-
-
             result.put("message", "Successfully create account ");
-            return ResponseEntity.status(201).contentType(MediaType.APPLICATION_JSON).body(result
-                    .toString());
-        }
+            return ResponseEntity.status(201).contentType(MediaType.APPLICATION_JSON).body(result.toString());
 
+
+        } else {
+
+            result.put("error", "Empty value from input ");
+            return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body(result.toString());
+        }
 
 
     }

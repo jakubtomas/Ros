@@ -15,7 +15,9 @@ public class Database {
     private MongoDatabase database = mongo.getDatabase("ros");
 
     //table ownerRestaurant
-    private MongoCollection<Document> ownerRestaurant = database.getCollection("ownerRestaurant");
+    private MongoCollection<Document> collectionOwnerRestaurant = database.getCollection("ownerRestaurant");
+    private MongoCollection<Document> collectionCustomer = database.getCollection("customer");
+    private MongoCollection<Document> collectionEmployee = database.getCollection("employee");
 
 
     public void closeConnectionDb() {
@@ -30,6 +32,7 @@ public class Database {
                 .append("lname", jsonObject.getString("lname"))
                 .append("login", jsonObject.getString("login"))
                 .append("password", jsonObject.getString("password"))
+                .append("token", "")
 
                 //contact
                 .append("address", jsonObject.getString("address"))
@@ -46,7 +49,7 @@ public class Database {
                 .append("invoiceCity", jsonObject.getString("invoiceCity"));
 
 
-        ownerRestaurant.insertOne(document);
+        collectionOwnerRestaurant.insertOne(document);
 
         System.out.println("=================================");
         System.out.println("IinsertOwnerRestaurant successfully ");
@@ -55,7 +58,7 @@ public class Database {
 
 
     public boolean existToken(String token, String login) throws JSONException {
-        try (MongoCursor<Document> cursor = ownerRestaurant.find().iterator()) {
+        try (MongoCursor<Document> cursor = collectionOwnerRestaurant.find().iterator()) {
 
             System.out.println("input token " + token);
             System.out.println("input login " + login);
@@ -71,6 +74,53 @@ public class Database {
             }
         }
         return false;
+    }
+
+
+
+    public boolean existValue(String nameTable, String nameColumn,String searchValue ) {
+
+        Document found;
+
+        //collection ownerRestaurant
+        if (nameTable.equals("ownerRestaurant")) {
+             found = collectionOwnerRestaurant.find(new Document(nameColumn, searchValue)).first();
+
+             // collection customer
+        } else if (nameTable.equals("customer")) {
+            found = collectionCustomer.find(new Document(nameColumn, searchValue)).first();
+
+        } else if (nameTable.equals("employee")) {
+            found = collectionEmployee.find(new Document(nameColumn, searchValue)).first();
+
+        }else {
+
+            found = collectionCustomer.find(new Document(nameColumn, searchValue)).first();
+        }
+
+
+        System.out.println("found is " + found);
+
+
+        JSONObject object = new JSONObject(found);
+
+        //close Connection Database
+        closeConnectionDb();
+
+        if (found == null) {
+            System.out.println("---------------------------");
+            System.out.println(" WE DONT HAVE VALUE");
+            System.out.println("---------------------------");
+            return false; //  dos not exist record
+        } else {
+            System.out.println("-----------------------");
+            System.out.println("get login from json  === " + object.getString("login") + " ===");
+            System.out.println("we HAVE VALUE IN OUR DATABASE ");
+            System.out.println("-----------------------");
+            return true;
+        }
+
+
     }
 
 
