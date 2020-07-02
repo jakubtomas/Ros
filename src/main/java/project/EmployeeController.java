@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class EmployeeController extends EntityController {
 
-    @RequestMapping(method = RequestMethod.POST, value = "/customerRegistration")
-    public ResponseEntity<String> customerRegistration (@RequestBody String data) throws JSONException {
+    @RequestMapping(method = RequestMethod.POST, value = "/employeeRegistration")
+    public ResponseEntity<String> employeeRegistration (@RequestBody String data) throws JSONException {
 
 
         JSONObject inputJson = new JSONObject(data);

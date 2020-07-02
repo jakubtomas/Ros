@@ -2,12 +2,12 @@ package Person;
 
 public abstract class EntityPerson {
 
-    protected String fname;
-    protected String lname;
-    protected String login;
-    protected String password;
-    protected String token;
-    protected Address address; // class
+    private String fname;
+    private String lname;
+    private String login;
+    private String password;
+    private String token;
+    private Address address; // class
 
 
     public EntityPerson(String fname, String lname, String login, String password, String token, Address address) {

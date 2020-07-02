@@ -15,13 +15,15 @@ public class Restaurant {
 
 
     private List<Employee> EmployeeList = new ArrayList<>();
-    private List<Reservation> ReservationList = new ArrayList<>();
+    private List<OrderReservation> orderReservationList = new ArrayList<>();
     private List<Integer> TablesList = new ArrayList<>();
 
     private MenulList menulList;
 
     private int visitors;
     private double raiting;
+
+
 
 }
 

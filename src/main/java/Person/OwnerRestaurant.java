@@ -2,6 +2,7 @@ package Person;
 
 public class OwnerRestaurant extends  EntityPerson {
     private int owner_id;
+    private int restaurant_id;
     private String companyName;
     private String ico;
     private String dic;

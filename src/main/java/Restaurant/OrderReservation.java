@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Reservation {
+public class OrderReservation {
     private int reservation_id;
     private int restaurant_id;
     private int customer_id;
@@ -19,7 +19,7 @@ public class Reservation {
     private double priceWithDph;
     private double DPH;
 
-    public Reservation(int reservation_id, int restaurant_id, int customer_id, int table, LocalDateTime createdTime, LocalDateTime orderTime, List<Integer> foodList, List<Integer> drinkList, double price, double priceWithDph, double DPH) {
+    public OrderReservation(int reservation_id, int restaurant_id, int customer_id, int table, LocalDateTime createdTime, LocalDateTime orderTime, List<Integer> foodList, List<Integer> drinkList, double price, double priceWithDph, double DPH) {
         this.reservation_id = reservation_id;
         this.restaurant_id = restaurant_id;
         this.customer_id = customer_id;
@@ -32,6 +32,9 @@ public class Reservation {
         this.priceWithDph = priceWithDph;
         this.DPH = DPH;
     }
+    // todo change constructor  add values into list , you have more than one list
+
+
 
     public int getReservation_id() {
         return reservation_id;
