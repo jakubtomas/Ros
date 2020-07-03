@@ -2,6 +2,7 @@ package project;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,12 +14,71 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class OwnerRestaurantController extends EntityController {
 
-    @RequestMapping(method = RequestMethod.POST, value = "/registrationOwnerRestaurant")
-    public ResponseEntity<String> registrationOwnerRestaurant(@RequestBody String data) throws JSONException {
+
+
+    @RequestMapping(method = RequestMethod.POST, value = "/login")
+    public ResponseEntity<String> login(@RequestBody String data) throws JSONException {
 
         JSONObject inputJson = new JSONObject(data);
+        JSONObject result = new JSONObject();
+        JSONObject objectforDb = new JSONObject();
 
-//        List<String> errors = new ArrayList<>();
+
+        if (inputJson.has("login") && inputJson.has("password")) {
+
+            //check password and login that are empty
+            if (inputJson.getString("password").isEmpty() || inputJson.getString("login").isEmpty()) {
+                result.put("error", "Password and login are mandatory fields");
+                return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body(result.toString());
+
+            }
+
+            String hashInputPassword = hash(inputJson.getString("password")); // create hash
+
+
+            Database db = new Database();
+            JSONObject userObject = db.getUser(inputJson.getString("login"));
+
+            if (BCrypt.checkpw(inputJson.getString("password"), userObject.getString("password"))) {
+
+                System.out.println("password match okey ");
+                // todo generate token and save into database
+                // update value token in database
+
+                String token = generateToken();
+
+
+
+            } else {
+                System.out.println(" password dosnt match");
+            }
+
+
+            System.out.println("userobject " + userObject.getString("password"));
+            System.out.println("userobject " + userObject.getString("login"));
+            System.out.println("=====================================");
+            System.out.println("userobject " + inputJson.getString("login"));
+            System.out.println("userobject " + inputJson.getString("password"));
+
+
+        }
+
+
+
+
+
+
+
+        return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body(result.toString());
+    }
+
+
+        @RequestMapping(method = RequestMethod.POST, value = "/createOwnerRestaurant")
+    public ResponseEntity<String> createOwnerRestaurant(@RequestBody String data) throws JSONException {
+
+        // todo dont forget input also city , state, street, zip to address
+
+        JSONObject inputJson = new JSONObject(data);
         JSONObject result = new JSONObject();
         JSONObject objectforDb = new JSONObject();
 
@@ -34,91 +94,43 @@ public class OwnerRestaurantController extends EntityController {
 
 
             // todo open connection database  somewhere here
-            // check exist login
-
-            // existValue  String nameColumn, String login || existvlaue || existvalue ||
-            /*if (existValue("ownerRestaurant", "login", inputJson.getString("login"))
-                    || existValue("customer", "login", inputJson.getString("login"))
-                    || existValue("employee", "login", inputJson.getString("login"))) {
-
-
-                result.put("login", "Login exist, Please change login  ");
-
-            }*/
-
-            /*if (existValue("ownerRestaurant", "email", inputJson.getString("email"))
-                    || existValue("customer", "email", inputJson.getString("email"))
-                    || existValue("employee", "email", inputJson.getString("email"))) {
-
-
-            }*/
-            /*//check ico that exist
-            if (existValue("ownerRestaurant", "ico", inputJson.getString("ico"))
-                    || existValue("customer", "ico", inputJson.getString("ico"))
-                    || existValue("employee", "ico", inputJson.getString("ico"))) {
-
-
-            }*/
 
             // create database
             Database database = new Database();
 
-
+            // check exist login
             if (database.existValue("login", inputJson.getString("login"))) {
                 result.put("login", "Login exist, Please change login  ");
             }
 
+           // check exist email
             if (database.existValue("email", inputJson.getString("email"))) {
                 result.put("email", "Email exist  ");
             }
 
+            // check exist ico
             if (database.existValue("ico", inputJson.getString("ico"))) {
                 result.put("ico", "Ico exist  ");
             }
 
+            // check exist dic
             if (database.existValue("dic", inputJson.getString("dic"))) {
                 result.put("dic", "dic exist  ");
             }
 
+            // check exist icDph
             if (database.existValue("icDph", inputJson.getString("icDph"))) {
                 result.put("icDph", "icDph exist  ");
             }
 
+            // check exist companyName
             if (database.existValue("companyName", inputJson.getString("companyName"))) {
                 result.put("companyName", "companyName exist  ");
             }
 
             database.closeConnectionDb();
 
-            //check Email that exist
 
-
-            //check dic that exist
-           /* if (existValue("ownerRestaurant", "dic", inputJson.getString("dic"))
-                    || existValue("customer", "dic", inputJson.getString("dic"))
-                    || existValue("employee", "dic", inputJson.getString("dic"))) {
-
-                result.put("dic", "dic exist  ");
-
-            }*/
-
-            //check icDph that exist
-            /*if (existValue("ownerRestaurant", "icDph", inputJson.getString("icDph"))
-                    || existValue("customer", "icDph", inputJson.getString("icDph"))
-                    || existValue("employee", "icDph", inputJson.getString("icDph"))) {
-
-                result.put("icDph", "icDph exist  ");
-
-            }*/
-
-            // check company Name that exist
-            /*if (existValue("ownerRestaurant", "companyName", inputJson.getString("companyName"))
-                    || existValue("customer", "companyName", inputJson.getString("companyName"))
-                    || existValue("employee", "companyName", inputJson.getString("companyName"))) {
-
-                result.put("companyName", "companyName exist  ");
-
-            }*/
             // todo write close database connection
             //todo write condition when is empty result continue when no return 400
 //            return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body(result.toString());
@@ -167,5 +179,43 @@ public class OwnerRestaurantController extends EntityController {
 
 
     }
+
+
+    /**
+     * @name Jakub Tomas
+     * @date 5.7.2020
+     * @param data    , String nameRestaurant, String login , String token, String name food
+     *                price Double
+     * @return String
+     * @throws JSONException
+     */
+    /**/
+
+    @RequestMapping(method = RequestMethod.POST, value = "/restaurant/food/create")
+    public ResponseEntity<String> createFood(@RequestBody String data) throws JSONException {
+
+
+        JSONObject inputJson = new JSONObject(data);
+        JSONObject result = new JSONObject();
+        JSONObject objectforDb = new JSONObject();
+
+        // check exist valid Token
+        Database db = new Database();
+        if (db.matchToken(inputJson.getString("token"),inputJson.getString("login"))) {
+            result.put("message", "Unauthorized.");
+
+            return ResponseEntity.status(401).contentType(MediaType.APPLICATION_JSON).body(result.toString());
+        }
+
+
+        //check exist nameRestaurant
+
+
+
+
+        return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body(result.toString());
+
+    }
+
 
 }
