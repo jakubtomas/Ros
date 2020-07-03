@@ -60,6 +60,7 @@ public class OwnerRestaurantController extends EntityController {
 
             }*/
 
+            // create database
             Database database = new Database();
 
 
