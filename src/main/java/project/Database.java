@@ -84,50 +84,6 @@ public class Database {
 
 
 
-   /* public boolean existValue(String nameTable, String nameColumn,String searchValue ) {
-
-        Document found;
-
-        //collection ownerRestaurant
-        if (nameTable.equals("ownerRestaurant")) {
-             found = collectionOwnerRestaurant.find(new Document(nameColumn, searchValue)).first();
-
-             // collection customer
-        } else if (nameTable.equals("customer")) {
-            found = collectionCustomer.find(new Document(nameColumn, searchValue)).first();
-
-        } else if (nameTable.equals("employee")) {
-            found = collectionEmployee.find(new Document(nameColumn, searchValue)).first();
-
-        }else {
-
-            found = collectionCustomer.find(new Document(nameColumn, searchValue)).first();
-        }
-
-
-        System.out.println("found is " + found);
-
-
-        JSONObject objectResult = new JSONObject(found);
-
-        //close Connection Database
-        closeConnectionDb();
-
-        if (found == null) {
-            System.out.println("---------------------------");
-            System.out.println(" WE DONT HAVE VALUE");
-            System.out.println("---------------------------");
-            return false; //  dos not exist record
-        } else {
-            System.out.println("-----------------------");
-           // System.out.println("get login from json  === " + object.getString("login") + " ===");
-            System.out.println("we HAVE VALUE IN OUR DATABASE ");
-            System.out.println("-----------------------");
-            return true;
-        }
-    }*/
-
-
 
     public boolean existValue(String nameColumn, String searchValue) {
 
