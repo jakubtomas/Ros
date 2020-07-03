@@ -8,6 +8,8 @@ import org.bson.Document;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class Database {
 
     // todo create Design Pattern for connection  Singleton
@@ -18,6 +20,10 @@ public class Database {
     private MongoCollection<Document> collectionOwnerRestaurant = database.getCollection("ownerRestaurant");
     private MongoCollection<Document> collectionCustomer = database.getCollection("customer");
     private MongoCollection<Document> collectionEmployee = database.getCollection("employee");
+
+
+
+
 
 
     public void closeConnectionDb() {
@@ -78,7 +84,7 @@ public class Database {
 
 
 
-    public boolean existValue(String nameTable, String nameColumn,String searchValue ) {
+   /* public boolean existValue(String nameTable, String nameColumn,String searchValue ) {
 
         Document found;
 
@@ -102,7 +108,7 @@ public class Database {
         System.out.println("found is " + found);
 
 
-        JSONObject object = new JSONObject(found);
+        JSONObject objectResult = new JSONObject(found);
 
         //close Connection Database
         closeConnectionDb();
@@ -114,13 +120,48 @@ public class Database {
             return false; //  dos not exist record
         } else {
             System.out.println("-----------------------");
-            System.out.println("get login from json  === " + object.getString("login") + " ===");
+           // System.out.println("get login from json  === " + object.getString("login") + " ===");
             System.out.println("we HAVE VALUE IN OUR DATABASE ");
             System.out.println("-----------------------");
             return true;
         }
+    }*/
 
 
+
+    public boolean existValue(String nameColumn, String searchValue) {
+
+        // solve this with array or array list
+        Document found ;
+
+        boolean result = false;
+
+        ArrayList<MongoCollection<Document>> collections = new ArrayList<>();
+
+        collections.add(collectionOwnerRestaurant);
+        collections.add(collectionEmployee);
+        collections.add(collectionCustomer);
+
+
+        for (int collection = 0; collection < collections.size(); collection++) {
+
+            found = collections.get(collection).find(new Document(nameColumn, searchValue)).first();
+
+
+            if (found == null) {
+                System.out.println(" WE DONT HAVE VALUE");
+                result = false;
+
+            } else {
+                System.out.println("we HAVE VALUE IN OUR DATABASE ");
+                result = true;
+                break;
+
+            }
+
+        }
+
+        return result;
     }
 
 

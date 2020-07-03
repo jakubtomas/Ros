@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-
 //todo change crossOrigin address
 // this address achieve permit connection from address , from Vue application
 @CrossOrigin(origins = {"http://localhost:8081"}) // or 8080
@@ -34,73 +33,94 @@ public class OwnerRestaurantController extends EntityController {
                 inputJson.has("invoiceZipcode") && inputJson.has("invoiceCity")) {
 
 
-
             // todo open connection database  somewhere here
             // check exist login
 
             // existValue  String nameColumn, String login || existvlaue || existvalue ||
-            if (existValue("ownerRestaurant", "login", inputJson.getString("login"))
+            /*if (existValue("ownerRestaurant", "login", inputJson.getString("login"))
                     || existValue("customer", "login", inputJson.getString("login"))
                     || existValue("employee", "login", inputJson.getString("login"))) {
 
 
                 result.put("login", "Login exist, Please change login  ");
 
-            }
+            }*/
 
-
-            //check Email that exist
-            if (existValue("ownerRestaurant", "email", inputJson.getString("email"))
+            /*if (existValue("ownerRestaurant", "email", inputJson.getString("email"))
                     || existValue("customer", "email", inputJson.getString("email"))
                     || existValue("employee", "email", inputJson.getString("email"))) {
 
-                result.put("email", "Email exist  ");
 
-            }
-
-
-            //check ico that exist
+            }*/
+            /*//check ico that exist
             if (existValue("ownerRestaurant", "ico", inputJson.getString("ico"))
                     || existValue("customer", "ico", inputJson.getString("ico"))
                     || existValue("employee", "ico", inputJson.getString("ico"))) {
 
-                result.put("ico", "Ico exist  ");
 
+            }*/
+
+            Database database = new Database();
+
+
+            if (database.existValue("login", inputJson.getString("login"))) {
+                result.put("login", "Login exist, Please change login  ");
             }
 
+            if (database.existValue("email", inputJson.getString("email"))) {
+                result.put("email", "Email exist  ");
+            }
+
+            if (database.existValue("ico", inputJson.getString("ico"))) {
+                result.put("ico", "Ico exist  ");
+            }
+
+            if (database.existValue("dic", inputJson.getString("dic"))) {
+                result.put("dic", "dic exist  ");
+            }
+
+            if (database.existValue("icDph", inputJson.getString("icDph"))) {
+                result.put("icDph", "icDph exist  ");
+            }
+
+            if (database.existValue("companyName", inputJson.getString("companyName"))) {
+                result.put("companyName", "companyName exist  ");
+            }
+
+            database.closeConnectionDb();
+
+            //check Email that exist
+
+
             //check dic that exist
-            if (existValue("ownerRestaurant", "dic", inputJson.getString("dic"))
+           /* if (existValue("ownerRestaurant", "dic", inputJson.getString("dic"))
                     || existValue("customer", "dic", inputJson.getString("dic"))
                     || existValue("employee", "dic", inputJson.getString("dic"))) {
 
                 result.put("dic", "dic exist  ");
 
-            }
+            }*/
 
             //check icDph that exist
-            if (existValue("ownerRestaurant", "icDph", inputJson.getString("icDph"))
+            /*if (existValue("ownerRestaurant", "icDph", inputJson.getString("icDph"))
                     || existValue("customer", "icDph", inputJson.getString("icDph"))
                     || existValue("employee", "icDph", inputJson.getString("icDph"))) {
 
                 result.put("icDph", "icDph exist  ");
 
-            }
+            }*/
 
             // check company Name that exist
-            if (existValue("ownerRestaurant", "companyName", inputJson.getString("companyName"))
+            /*if (existValue("ownerRestaurant", "companyName", inputJson.getString("companyName"))
                     || existValue("customer", "companyName", inputJson.getString("companyName"))
                     || existValue("employee", "companyName", inputJson.getString("companyName"))) {
 
                 result.put("companyName", "companyName exist  ");
 
-            }
+            }*/
             // todo write close database connection
             //todo write condition when is empty result continue when no return 400
 //            return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body(result.toString());
-
-
-
-
 
 
             // hash password
