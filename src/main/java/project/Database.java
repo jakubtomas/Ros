@@ -5,6 +5,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,8 +20,7 @@ public class Database {
     //table ownerRestaurant
     private MongoCollection<Document> collectionOwnerRestaurant = database.getCollection("ownerRestaurant");
     private MongoCollection<Document> collectionCustomer = database.getCollection("customer");
-    private MongoCollection<Document> collectionEmployee;
-
+    private MongoCollection<Document> collectionEmployee =database.getCollection("employee");
 
 
     public void closeConnectionDb() {
@@ -82,7 +82,6 @@ public class Database {
                 .append("zip", jsonObject.getString("zip"));
 
 
-
         collectionCustomer.insertOne(document);
 
         System.out.println("===" +
@@ -92,6 +91,126 @@ public class Database {
     }
 
 
+    /*public boolean existValue(String nameColumn, String searchValue) {
+
+        // solve this with array or array list
+        Document found = null;
+
+        boolean result = false;
+
+        ArrayList<MongoCollection<Document>> collections = new ArrayList<>();
+
+        collections.add(collectionOwnerRestaurant);
+        collections.add(collectionCustomer);
+        collections.add(collectionEmployee);
+
+
+        for (int collection = 0; collection < collections.size(); collection++) {
+
+            System.out.println("Number table  " + collection);
+
+            found = collections.get(collection).find(new Document(nameColumn, searchValue)).first();
+
+            if (found == null) {
+                System.out.println(" WE DONT HAVE VALUE");
+                result = false;
+
+            } else {
+                System.out.println("we HAVE VALUE IN OUR DATABASE ");
+                result = true;
+                break;
+            }
+        }
+        return result;
+    }*/
+
+    public boolean existValue(String nameColumn, String searchValue) {
+
+        //  check Table OwnerRestaurant
+        Document found = collectionOwnerRestaurant.find(new Document(nameColumn, searchValue)).first();
+        if (found != null) {
+            System.out.println("we HAVE VALUE IN OUR DATABASE ");
+            return true;
+        }
+
+        //check table Customer
+       found = collectionCustomer.find(new Document(nameColumn, searchValue)).first();
+        if (found != null) {
+            System.out.println("we HAVE VALUE IN OUR DATABASE ");
+            return true;
+        }
+
+        // check table employee
+        found = collectionEmployee.find(new Document(nameColumn, searchValue)).first();
+        if (found != null) {
+            System.out.println("we HAVE VALUE IN OUR DATABASE ");
+            return true;
+        }
+
+
+        return false;
+    }
+
+
+    /**
+     * function for login  retur
+     *
+     * @param login
+     * @return
+     * @throws JSONException
+     */
+    public JSONObject getUser(String login) throws JSONException {
+        Document found = collectionOwnerRestaurant.find(new Document("login", login)).first();
+        JSONObject object = new JSONObject(found);
+
+        if (found == null) {
+            System.out.println(" WE DONT HAVE VALUE");
+            return null; //  dos not exist record
+        } else {
+            System.out.println("get login from json  === " + object.getString("login") + " ===");
+            System.out.println("we HAVE VALUE IN OUR DATABASE ");
+            return object;
+        }
+
+    }
+
+
+    public void saveToken(String login, String token) {
+        // solve this with array or array list
+        Document found;
+
+        boolean result = false;
+
+        ArrayList<MongoCollection<Document>> collections = new ArrayList<>();
+
+        collections.add(collectionOwnerRestaurant);
+        collections.add(collectionEmployee);
+        collections.add(collectionCustomer);
+
+
+        for (int collection = 0; collection < collections.size(); collection++) {
+
+            found = collections.get(collection).find(new Document("login", login)).first();
+
+            if (found == null) {
+
+                System.out.println("I dont have value ");
+            } else {
+                System.out.println("we HAVE VALUE IN OUR DATABASE ");
+
+
+                Bson updateQuery = new Document("login", login);
+                Bson newValue = new Document("token", token);
+                Bson update = new Document("$set", newValue);
+
+                collections.get(collection).updateOne(updateQuery, update);
+                break;
+
+            }
+
+        }
+
+    }
 
 
     /**
@@ -99,6 +218,8 @@ public class Database {
      * @param login
      * @return
      * @throws JSONException
+     * @author Jakub Tomas
+     * @date 5.7.2020
      */
 
     public boolean matchToken(String token, String login) throws JSONException {
@@ -131,61 +252,4 @@ public class Database {
 
         return false;
     }
-
-
-
-    public boolean existValue(String nameColumn, String searchValue) {
-
-        // solve this with array or array list
-        Document found ;
-
-        boolean result = false;
-
-        ArrayList<MongoCollection<Document>> collections = new ArrayList<>();
-
-        collections.add(collectionOwnerRestaurant);
-        collections.add(collectionEmployee);
-        collections.add(collectionCustomer);
-
-
-        for (int collection = 0; collection < collections.size(); collection++) {
-
-            found = collections.get(collection).find(new Document(nameColumn, searchValue)).first();
-
-            if (found == null) {
-                System.out.println(" WE DONT HAVE VALUE");
-                result = false;
-
-            } else {
-                System.out.println("we HAVE VALUE IN OUR DATABASE ");
-                result = true;
-                break;
-            }
-        }
-        return result;
-    }
-
-
-    /** function for login  retur
-     * @param login
-     * @return
-     * @throws JSONException
-     */
-    public JSONObject getUser(String login) throws JSONException {
-        Document found = collectionOwnerRestaurant.find(new Document("login", login)).first();
-        JSONObject object = new JSONObject(found);
-
-        if (found == null) {
-            System.out.println(" WE DONT HAVE VALUE");
-            return null; //  dos not exist record
-        } else {
-            System.out.println("get login from json  === " + object.getString("login") + " ===");
-            System.out.println("we HAVE VALUE IN OUR DATABASE ");
-            return object;
-        }
-
-
-
-    }
-
 }
