@@ -20,7 +20,7 @@ public class Database {
     //table ownerRestaurant
     private MongoCollection<Document> collectionOwnerRestaurant = database.getCollection("ownerRestaurant");
     private MongoCollection<Document> collectionCustomer = database.getCollection("customer");
-    private MongoCollection<Document> collectionEmployee =database.getCollection("employee");
+    private MongoCollection<Document> collectionEmployee = database.getCollection("employee");
 
 
     public void closeConnectionDb() {
@@ -39,7 +39,7 @@ public class Database {
                 .append("lname", jsonObject.getString("lname"))
                 .append("login", jsonObject.getString("login"))
                 .append("password", jsonObject.getString("password"))
-                .append("token", "")
+                .append("token", "")  // default empty token
 
                 //contact
                 .append("address", jsonObject.getString("address"))
@@ -59,7 +59,7 @@ public class Database {
         collectionOwnerRestaurant.insertOne(document);
 
         System.out.println("=================================");
-        System.out.println("Insert OwnerRestaurant successfully ");
+        System.out.println(" Message for console --> Insert OwnerRestaurant successfully ");
         System.out.println("=================================");
     }
 
@@ -124,6 +124,11 @@ public class Database {
         return result;
     }*/
 
+    /**
+     * @param nameColumn
+     * @param searchValue
+     * @return
+     */
     public boolean existValue(String nameColumn, String searchValue) {
 
         //  check Table OwnerRestaurant
@@ -134,7 +139,7 @@ public class Database {
         }
 
         //check table Customer
-       found = collectionCustomer.find(new Document(nameColumn, searchValue)).first();
+        found = collectionCustomer.find(new Document(nameColumn, searchValue)).first();
         if (found != null) {
             System.out.println("we HAVE VALUE IN OUR DATABASE ");
             return true;
@@ -147,7 +152,7 @@ public class Database {
             return true;
         }
 
-
+        //when  dont  exist value in database
         return false;
     }
 
@@ -196,8 +201,8 @@ public class Database {
 
                 System.out.println("I dont have value ");
             } else {
-                System.out.println("we HAVE VALUE IN OUR DATABASE ");
 
+                System.out.println("we HAVE VALUE IN OUR DATABASE ");
 
                 Bson updateQuery = new Document("login", login);
                 Bson newValue = new Document("token", token);
@@ -232,9 +237,8 @@ public class Database {
         collections.add(collectionCustomer);
 
         for (int collection = 0; collection < collections.size(); collection++) {
+
             try (MongoCursor<Document> cursor = collections.get(collection).find().iterator()) {
-
-
                 while (cursor.hasNext()) {
                     Document doc = cursor.next();
                     JSONObject object = new JSONObject(doc.toJson());
