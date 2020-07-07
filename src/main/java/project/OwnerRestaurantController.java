@@ -15,15 +15,16 @@ import org.springframework.web.bind.annotation.*;
 public class OwnerRestaurantController extends EntityController {
 
 
-
     /**
+     * Login users
+     *
      * @param data
      * @return
      * @throws JSONException
      */
 
     @RequestMapping(method = RequestMethod.POST, value = "/login")
-    public ResponseEntity<String> login (@RequestBody String data) throws JSONException {
+    public ResponseEntity<String> login(@RequestBody String data) throws JSONException {
 
         JSONObject inputJson = new JSONObject(data);
         JSONObject result = new JSONObject();
@@ -39,26 +40,43 @@ public class OwnerRestaurantController extends EntityController {
 
             //create database connection
             Database db = new Database();
-            JSONObject userObject = db.getUser(inputJson.getString("login")); //get data from database
+            JSONObject userObject = db.getLoginData(inputJson.getString("login")); //get data from database
+
 
             if (userObject == null) {
                 result.put("login", "Bad name or password ");
                 return ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON).body(result.toString());
 
-            }
+            }/*else if (userObject.has("companyName")){
+                // create object ownerRestaurant
+
+                //OwnerRestaurant ownerRestaurant = new OwnerRestaurant()
+
+            } else if (!userObject.has("companyName") && userObject.has("login") && !userObject.has("nameRestaurant") ) {
+                //create object Customer
+
+
+            }else if(!userObject.has("companyName") && userObject.has("login") && userObject.has("nameRestaurant")){
+                //create object Employee
+
+            }*/
+
 
             //check password compare password from database and from input form
-            if ( BCrypt.checkpw(inputJson.getString("password"), userObject.getString("password"))) {
+            if (BCrypt.checkpw(inputJson.getString("password"), userObject.getString("password"))) {
                 //correct password
                 System.out.println("password match okey ");
 
                 String token = generateToken();
 
-                System.out.println("token " +token);
+                System.out.println("token " + token);
 
                 db.saveToken(inputJson.getString("login"), token);
                 db.closeConnectionDb();
+
                 result.put("message", "successfully login ");
+                result.put("login", userObject.getString("login"));
+                result.put("token", token);
                 return ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON).body(result.toString());
 
                 //bad password
@@ -85,17 +103,25 @@ public class OwnerRestaurantController extends EntityController {
 
         JSONObject objectInput = new JSONObject(data);
         JSONObject result = new JSONObject();
-        String login = objectInput.getString("login");
 
-        // todo check the token
-        // todo create function check token
-        // when is success delete token  in database  set token null
 
-        return ResponseEntity.status(401).contentType(MediaType.APPLICATION_JSON).body(result.toString());
+        Database database = new Database();
+        if (database.matchToken( token, objectInput.getString("login"))) {
+
+            database.deleteToken(token, objectInput.getString("login"));
+            database.closeConnectionDb();
+            result.put("message", "successfully logout account ");
+            return ResponseEntity.status(401).contentType(MediaType.APPLICATION_JSON).body(result.toString());
+
+        } else {
+
+            database.closeConnectionDb();
+            result.put("message", "Unauthorized.");
+            return ResponseEntity.status(401).contentType(MediaType.APPLICATION_JSON).body(result.toString());
+        }
+
 
     }
-
-
 
 
     /**
@@ -159,7 +185,7 @@ public class OwnerRestaurantController extends EntityController {
 
             // control  than we have value in object errorMessage
             if (errorMessage.has("login") || errorMessage.has("email") || errorMessage.has("ico")
-                    ||errorMessage.has("dic") || errorMessage.has("icDph") || errorMessage.has("companyName") ) {
+                    || errorMessage.has("dic") || errorMessage.has("icDph") || errorMessage.has("companyName")) {
 
                 database.closeConnectionDb();
                 return ResponseEntity.status(201).contentType(MediaType.APPLICATION_JSON).body(errorMessage.toString());
@@ -191,7 +217,6 @@ public class OwnerRestaurantController extends EntityController {
                 objectforDb.put("invoiceCity", inputJson.getString("invoiceCity"));
 
 
-
                 //database
                 database.insertOwnerRestaurant(objectforDb);
                 database.closeConnectionDb();
@@ -220,7 +245,36 @@ public class OwnerRestaurantController extends EntityController {
      */
     /**/
     @RequestMapping(method = RequestMethod.POST, value = "/restaurant/food/create")
-    public ResponseEntity<String> createFood(@RequestBody String data) throws JSONException {
+    public ResponseEntity<String> createFood(@RequestBody String data, @RequestHeader(name = "Authorization") String token) throws JSONException {
+
+
+        JSONObject inputJson = new JSONObject(data);
+        JSONObject result = new JSONObject();
+        JSONObject objectforDb = new JSONObject();
+
+
+        Database db = new Database();
+
+        // check token
+        if (db.matchToken(token, inputJson.getString("login"))) {
+            result.put("message", "Unauthorized.");
+
+            return ResponseEntity.status(401).contentType(MediaType.APPLICATION_JSON).body(result.toString());
+        }
+
+        //todo create the objectFoddb json for database
+        //check exist nameRestaurant
+
+
+        return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body(result.toString());
+
+    }
+
+
+
+    // update Food
+    @RequestMapping(method = RequestMethod.POST, value = "/restaurant/food/update")
+    public ResponseEntity<String> updateFood(@RequestBody String data, @RequestHeader(name = "Authorization") String token) throws JSONException {
 
 
         JSONObject inputJson = new JSONObject(data);
@@ -229,7 +283,7 @@ public class OwnerRestaurantController extends EntityController {
 
         // check exist valid Token
         Database db = new Database();
-        if (db.matchToken(inputJson.getString("token"), inputJson.getString("login"))) {
+        if (db.matchToken(token, inputJson.getString("login"))) {
             result.put("message", "Unauthorized.");
 
             return ResponseEntity.status(401).contentType(MediaType.APPLICATION_JSON).body(result.toString());
@@ -243,5 +297,32 @@ public class OwnerRestaurantController extends EntityController {
 
     }
 
+
+
+
+    // delete Food from database
+    @RequestMapping(method = RequestMethod.POST, value = "/restaurant/food/delete")
+    public ResponseEntity<String> deleteFood(@RequestBody String data, @RequestHeader(name = "Authorization") String token) throws JSONException {
+
+
+        JSONObject inputJson = new JSONObject(data);
+        JSONObject result = new JSONObject();
+        JSONObject objectforDb = new JSONObject();
+
+        // check exist valid Token
+        Database db = new Database();
+        if (db.matchToken(token, inputJson.getString("login"))) {
+            result.put("message", "Unauthorized.");
+
+            return ResponseEntity.status(401).contentType(MediaType.APPLICATION_JSON).body(result.toString());
+        }
+
+
+        //check exist nameRestaurant
+
+
+        return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body(result.toString());
+
+    }
 
 }
