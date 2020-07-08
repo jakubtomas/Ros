@@ -21,6 +21,7 @@ public class Database {
     private MongoCollection<Document> collectionOwnerRestaurant = database.getCollection("ownerRestaurant");
     private MongoCollection<Document> collectionCustomer = database.getCollection("customer");
     private MongoCollection<Document> collectionEmployee = database.getCollection("employee");
+    private MongoCollection<Document> collectionRestastaurans = database.getCollection("restaurants");
 
 
     public void closeConnectionDb() {
@@ -125,71 +126,6 @@ public class Database {
 
 
 
-    public void deleteToken(String token, String login) {
-        ArrayList<MongoCollection<Document>> collections = new ArrayList<>();
-
-        collections.add(collectionOwnerRestaurant);
-        collections.add(collectionEmployee);
-        collections.add(collectionCustomer);
-
-
-        for (int collection = 0; collection < collections.size(); collection++) {
-            try (MongoCursor<Document> cursor = collections.get(collection).find().iterator()) {
-
-                while (cursor.hasNext()) {
-                    Document doc = cursor.next();
-                    JSONObject object = new JSONObject(doc.toJson());
-
-                    if (object.getString("login").equals(login) && object.getString("token").equals(token)) {
-
-                        System.out.println("delete token succesfully ");
-
-                        Bson updateQuery=new Document("login", login);
-                        Bson newValue=new Document("token", "");
-                        Bson update=new Document("$set", newValue);
-                        collections.get(collection).updateOne(updateQuery, update);
-                    }
-                }
-            }
-        }
-
-    }
-/*
-
-    *//**
-     * @param token
-     * @param login
-     * @return
-     * @throws JSONException
-     *//*
-    public boolean existToken(String token, String login) throws JSONException {
-        ArrayList<MongoCollection<Document>> collections = new ArrayList<>();
-
-        collections.add(collectionOwnerRestaurant);
-        collections.add(collectionEmployee);
-        collections.add(collectionCustomer);
-
-
-        for (int collection = 0; collection < collections.size(); collection++) {
-            try (MongoCursor<Document> cursor = collections.get(collection).find().iterator()) {
-
-                System.out.println("search token input token " + token);
-                System.out.println("input login " + login);
-
-                while (cursor.hasNext()) {
-                    Document doc = cursor.next();
-                    JSONObject object = new JSONObject(doc.toJson());
-
-                    if (object.getString("login").equals(login) && object.getString("token").equals(token)) {
-                        System.out.println("login from object " + object.getString("login"));
-                        return true;
-
-                    }
-                }
-            }
-        }
-        return false;
-    }*/
 
 
     /**
@@ -216,6 +152,7 @@ public class Database {
         if (found != null) {
             System.out.println("WE have Object ");
             return object;
+
         }
 
 
@@ -305,4 +242,55 @@ public class Database {
 
         return false;
     }
+
+
+    public void deleteToken(String token, String login) {
+        ArrayList<MongoCollection<Document>> collections = new ArrayList<>();
+
+        collections.add(collectionOwnerRestaurant);
+        collections.add(collectionEmployee);
+        collections.add(collectionCustomer);
+
+
+        for (int collection = 0; collection < collections.size(); collection++) {
+            try (MongoCursor<Document> cursor = collections.get(collection).find().iterator()) {
+
+                while (cursor.hasNext()) {
+                    Document doc = cursor.next();
+                    JSONObject object = new JSONObject(doc.toJson());
+
+                    if (object.getString("login").equals(login) && object.getString("token").equals(token)) {
+
+                        System.out.println("delete token succesfully ");
+
+                        Bson updateQuery = new Document("login", login);
+                        Bson newValue = new Document("token", "");
+                        Bson update = new Document("$set", newValue);
+                        collections.get(collection).updateOne(updateQuery, update);
+                    }
+                }
+            }
+        }
+
+    }
+
+
+    public boolean existRestaurant(String nameRestaurant, String loginOwnerRestaurant) {
+        try (MongoCursor<Document> cursor = collectionRestastaurans.find().iterator()) {
+
+            while (cursor.hasNext()) {
+                Document doc = cursor.next();
+                JSONObject object = new JSONObject(doc.toJson());
+
+                if (object.getString("nameRestaurant").equals(nameRestaurant) &&
+                        object.getString("loginOwnerRestaurant").equals(loginOwnerRestaurant)) {
+                    System.out.println("login from object " + object.getString("login"));
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
 }
