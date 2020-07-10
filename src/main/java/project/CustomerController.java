@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class CustomerController extends EntityController {
 
+
     @RequestMapping(method = RequestMethod.POST, value = "/createAccountCustomer")
     public ResponseEntity<String> createAccountCustomer(@RequestBody String data) throws JSONException {
 
@@ -48,14 +49,6 @@ public class CustomerController extends EntityController {
             if (database.existValue("email", inputJson.getString("email"))) {
                 result.put("email", "Email exist  ");
             }
-
-
-            //database.closeConnectionDb();
-
-
-            // todo write close database connection
-            //todo write condition when is empty result continue when no return 400
-//            return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body(result.toString());
 
 
             // hash password
@@ -99,25 +92,7 @@ public class CustomerController extends EntityController {
     }
 
 
-    // List of all food which restaurant have
 
-
-        /*
-        input nameRestaurant :String
-               login String
-               token String
-
-        * */
-
-   /* @RequestMapping(method = RequestMethod.POST, value = "/createAccountCustomer")
-    public ResponseEntity<String> createFood(@RequestBody String data) throws JSONException {
-
-
-
-
-        return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body(result.toString());
-
-    }*/
 }
 
 

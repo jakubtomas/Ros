@@ -21,7 +21,7 @@ public class Database {
     private MongoCollection<Document> collectionOwnerRestaurant = database.getCollection("ownerRestaurant");
     private MongoCollection<Document> collectionCustomer = database.getCollection("customer");
     private MongoCollection<Document> collectionEmployee = database.getCollection("employee");
-    private MongoCollection<Document> collectionRestastaurans = database.getCollection("restaurants");
+    private MongoCollection<Document> collectionRestaurants = database.getCollection("restaurants");
 
 
     public void closeConnectionDb() {
@@ -124,6 +124,28 @@ public class Database {
         return false;
     }
 
+
+
+
+    /**@author Jakub Tomas
+     * @date 9.7.2020
+     * @param jsonObject
+     * @throws JSONException
+     */
+    public void insertRestaurant(JSONObject jsonObject) throws JSONException {
+
+        Document document = new Document()
+                .append("login", jsonObject.getString("login"))
+                .append("nameRestaurant", jsonObject.getString("nameRestaurant"))
+                .append("companyName", jsonObject.getString("companyName"))
+                .append("address", jsonObject.getString("address"));
+
+        collectionOwnerRestaurant.insertOne(document);
+
+        System.out.println("=================================");
+        System.out.println(" Message for console --> Insert insertRestaurant successfully  done ");
+        System.out.println("=================================");
+    }
 
 
 
@@ -276,7 +298,7 @@ public class Database {
 
 
     public boolean existRestaurant(String nameRestaurant, String loginOwnerRestaurant) {
-        try (MongoCursor<Document> cursor = collectionRestastaurans.find().iterator()) {
+        try (MongoCursor<Document> cursor = collectionRestaurants.find().iterator()) {
 
             while (cursor.hasNext()) {
                 Document doc = cursor.next();

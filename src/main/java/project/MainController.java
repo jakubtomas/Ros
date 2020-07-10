@@ -10,14 +10,8 @@ public class MainController {
 
 
 
-        // userController.checkPassword()
-        /*
-
-*/
-
 
 // C:\Program Files\MongoDB\Server\4.2\bin\mongod.exe
-
 
         //C:\Users\install\Desktop\vue project\my-app
 

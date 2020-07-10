@@ -11,12 +11,67 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 public class RestaurantController extends EntityController {
 
+
+    /**@author Jakub Tomas
+     * @date 9.7.2020
+     * @param data  String login - OwnerRestaurant,
+     *              nameRestaurant
+     *              ,companyName
+     *              ,address
+     * @param token
+     * @return
+     * @throws JSONException
+     */
+    @RequestMapping(method = RequestMethod.POST, value = "/restaurant/createRestaurant")
+    public ResponseEntity<String> createRestaurant(@RequestBody String data, @RequestHeader(name = "Authorization") String token) throws JSONException {
+
+
+        JSONObject inputJson = new JSONObject(data);
+        JSONObject result = new JSONObject();
+        JSONObject objectforDb = new JSONObject();
+
+
+        Database db = new Database();
+
+        // check token
+        if (!db.matchToken(token, inputJson.getString("login")) && !db.existValue("nameCompany", inputJson.getString("companyName"))) {
+            result.put("message", "Unauthorized.");
+
+            return ResponseEntity.status(401).contentType(MediaType.APPLICATION_JSON).body(result.toString());
+        }
+
+        // check exist restaurant
+        if (!db.existRestaurant(inputJson.getString("nameRestaurant"), inputJson.getString("login"))) {
+            result.put("message", "Unauthorized.");
+            return ResponseEntity.status(401).contentType(MediaType.APPLICATION_JSON).body(result.toString());
+        }
+        //objectforDb.put("nameRes", inputJson.getString("fname"));
+
+        // data into jsonObject
+        objectforDb.put("login", inputJson.getString("login"));
+        objectforDb.put("nameRestaurant", inputJson.getString("nameRestaurant"));
+        objectforDb.put("companyName", inputJson.getString("companyName"));
+        objectforDb.put("address", inputJson.getString("address"));
+
+        // database function insert data
+
+
+        db.insertRestaurant(objectforDb);
+        db.closeConnectionDb();
+
+        result.put("message", "Restaurant successfully done");
+
+        return ResponseEntity.status(201).contentType(MediaType.APPLICATION_JSON).body(result.toString());
+
+    }
+
+
     /**
      * @param data ,  String nameRestaurant,
-     *                String login ,
-     *                String token,
-     *                String name food
-     *                price Double
+     *             String login ,
+     *             String token,
+     *             String name food
+     *             price Double
      * @return String
      * @throws JSONException
      * @name Jakub Tomas
@@ -35,7 +90,7 @@ public class RestaurantController extends EntityController {
         Database db = new Database();
 
         // check token
-        if (!db.matchToken(token, inputJson.getString("login")) && !db.existValue("nameCompany" , inputJson.getString("companyName"))) {
+        if (!db.matchToken(token, inputJson.getString("login")) && !db.existValue("nameCompany", inputJson.getString("companyName"))) {
             result.put("message", "Unauthorized.");
 
             return ResponseEntity.status(401).contentType(MediaType.APPLICATION_JSON).body(result.toString());
@@ -49,10 +104,7 @@ public class RestaurantController extends EntityController {
         //objectforDb.put("nameRes", inputJson.getString("fname"));
 
 
-
-
         //todo create the objectFoddb json for database
-
 
 
         return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body(result.toString());
@@ -87,7 +139,6 @@ public class RestaurantController extends EntityController {
     }
 
 
-
     // update Food
     @RequestMapping(method = RequestMethod.POST, value = "/restaurant/food/update")
     public ResponseEntity<String> updateFood(@RequestBody String data, @RequestHeader(name = "Authorization") String token) throws JSONException {
@@ -109,8 +160,6 @@ public class RestaurantController extends EntityController {
         return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body(result.toString());
 
     }
-
-
 
 
     // delete Food from database
