@@ -140,7 +140,7 @@ public class Database {
                 .append("companyName", jsonObject.getString("companyName"))
                 .append("address", jsonObject.getString("address"));
 
-        collectionOwnerRestaurant.insertOne(document);
+        collectionRestaurants.insertOne(document);
 
         System.out.println("=================================");
         System.out.println(" Message for console --> Insert insertRestaurant successfully  done ");
@@ -305,7 +305,7 @@ public class Database {
                 JSONObject object = new JSONObject(doc.toJson());
 
                 if (object.getString("nameRestaurant").equals(nameRestaurant) &&
-                        object.getString("loginOwnerRestaurant").equals(loginOwnerRestaurant)) {
+                        object.getString("login").equals(loginOwnerRestaurant)) {
                     System.out.println("login from object " + object.getString("login"));
                     return true;
                 }

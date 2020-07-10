@@ -4,11 +4,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
+@RestController
 public class RestaurantController extends EntityController {
 
 
@@ -35,17 +33,18 @@ public class RestaurantController extends EntityController {
 
         // check token
         if (!db.matchToken(token, inputJson.getString("login")) && !db.existValue("nameCompany", inputJson.getString("companyName"))) {
-            result.put("message", "Unauthorized.");
+            result.put("message", "Unauthorized bad token  or bad nameCompany name .");
 
             return ResponseEntity.status(401).contentType(MediaType.APPLICATION_JSON).body(result.toString());
         }
 
         // check exist restaurant
-        if (!db.existRestaurant(inputJson.getString("nameRestaurant"), inputJson.getString("login"))) {
-            result.put("message", "Unauthorized.");
+        if (db.existRestaurant(inputJson.getString("nameRestaurant"), inputJson.getString("login"))) {
+            result.put("message", " the name restaurant exist  Please choose another name  for restaurant " );
             return ResponseEntity.status(401).contentType(MediaType.APPLICATION_JSON).body(result.toString());
         }
         //objectforDb.put("nameRes", inputJson.getString("fname"));
+
 
         // data into jsonObject
         objectforDb.put("login", inputJson.getString("login"));
