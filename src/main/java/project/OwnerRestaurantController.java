@@ -108,10 +108,8 @@ public class OwnerRestaurantController extends EntityController {
     @RequestMapping(method = RequestMethod.POST, value = "/logout")
     public ResponseEntity<String> logout(@RequestBody String data, @RequestHeader(name = "Authorization") String token) throws JSONException {
 
-
         JSONObject objectInput = new JSONObject(data);
         JSONObject result = new JSONObject();
-
 
         Database database = new Database();
         if (database.matchToken( token, objectInput.getString("login"))) {

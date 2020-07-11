@@ -24,30 +24,38 @@ public class CustomerController extends EntityController {
 
 
         JSONObject result = new JSONObject();
+        JSONObject errorMessage = new JSONObject();
         JSONObject objectforDb = new JSONObject();
 
 
         if (inputJson.has("fname") && inputJson.has("lname") &&
                 inputJson.has("login") && inputJson.has("password") &&
-                inputJson.has("address") && inputJson.has("email") &&
-                inputJson.has("phoneNumber") && inputJson.has("ico") &&
-                inputJson.has("city") && inputJson.has("state") &&
-                inputJson.has("street") && inputJson.has("zip")) {
+                inputJson.has("email") && inputJson.has("phoneNumber") &&
+                inputJson.has("city") && inputJson.has("street") &&
+                inputJson.has("zip") && inputJson.has("state")) {
 
 
-            // todo open connection database  somewhere here
-
-            // create database
             Database database = new Database();
 
             // check exist login
             if (database.existValue("login", inputJson.getString("login"))) {
-                result.put("login", "Login exist, Please change login  ");
+                errorMessage.put("login", "Login exist, Please change login  ");
             }
 
             // check exist email
             if (database.existValue("email", inputJson.getString("email"))) {
-                result.put("email", "Email exist  ");
+                errorMessage.put("email", "Email exist  ");
+            }
+
+            //checkPhoneNumber
+            if (database.existValue("phoneNumber", inputJson.getString("phoneNumber"))) {
+                errorMessage.put("phoneNumber", "PhoneNumber exist  ");
+            }
+
+            if (errorMessage.has("login") && errorMessage.has("email") && errorMessage.has("phoneNumber")) {
+                database.closeConnectionDb();
+                return ResponseEntity.status(201).contentType(MediaType.APPLICATION_JSON).body(errorMessage.toString());
+
             }
 
 
@@ -67,9 +75,9 @@ public class CustomerController extends EntityController {
 
             //address
             objectforDb.put("city", inputJson.getString("city"));
-            objectforDb.put("state", inputJson.getString("state"));
             objectforDb.put("street", inputJson.getString("street"));
             objectforDb.put("zip", inputJson.getString("zip"));
+            objectforDb.put("state", inputJson.getString("state"));
 
 
             //database

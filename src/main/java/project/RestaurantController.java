@@ -6,8 +6,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class RestaurantController extends EntityController {
+
+
 
 
     /**@author Jakub Tomas
@@ -63,6 +67,31 @@ public class RestaurantController extends EntityController {
         return ResponseEntity.status(201).contentType(MediaType.APPLICATION_JSON).body(result.toString());
 
     }
+
+
+    /**
+     * @return list of restaurants
+     * @throws JSONException
+     */
+    @RequestMapping(value = "/restaurants") //return LIST OF RESTAURANTS
+    public ResponseEntity<String> getUsers() throws JSONException {
+
+
+        Database database = new Database();
+
+        List<String> restaurants = database.getListRestaurants();
+
+        return ResponseEntity.status(201).contentType(MediaType.APPLICATION_JSON).body(restaurants.toString());
+
+    }
+
+
+
+
+
+
+
+
 
 
     /**

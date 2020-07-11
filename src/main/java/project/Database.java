@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Database {
 
@@ -65,6 +66,11 @@ public class Database {
     }
 
 
+    /**@Author Jakub Tomas
+     * @date 10.7.2020
+     * @param jsonObject
+     * @throws JSONException
+     */
     public void insertCustomer(JSONObject jsonObject) throws JSONException {
 
         Document document = new Document()
@@ -77,16 +83,17 @@ public class Database {
                 //contact
                 .append("email", jsonObject.getString("email"))
                 .append("phoneNumber", jsonObject.getString("phoneNumber"))
+
+                //address
                 .append("city", jsonObject.getString("city"))
-                .append("state", jsonObject.getString("state"))
                 .append("street", jsonObject.getString("street"))
-                .append("zip", jsonObject.getString("zip"));
+                .append("zip", jsonObject.getString("zip"))
+                .append("state", jsonObject.getString("state"));
 
 
         collectionCustomer.insertOne(document);
 
-        System.out.println("===" +
-                "==============================");
+        System.out.println("=================================");
         System.out.println("Insert Customer into database  successfully ");
         System.out.println("=================================");
     }
@@ -148,7 +155,23 @@ public class Database {
     }
 
 
+    /** Jakub Tomas
+     * @date  11.7.2019
+     * @return List <String>
+     * @throws JSONException
+     */
+    public List<String> getListRestaurants() throws JSONException {
 
+        List<String> restaurantList = new ArrayList<>();
+
+        for (Document document : collectionRestaurants.find()) {
+            JSONObject object = new JSONObject(document.toJson());  // document to json
+
+            restaurantList.add(object.getString("nameRestaurant"));
+        }
+
+        return restaurantList;
+    }
 
     /**
      * function for login  retur

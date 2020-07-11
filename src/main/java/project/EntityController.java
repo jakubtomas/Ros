@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Random;
 
 @RestController
-public abstract class EntityController {
+public   abstract class EntityController {
 
     public static String generateToken() {
         Random rand = new Random();
